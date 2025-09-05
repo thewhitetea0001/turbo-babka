@@ -1,14 +1,34 @@
 #include "../headers/status.h"
 #include <string.h>
+#include <stdlib.h>
 #include <concord/log.h>
 
 void on_interaction(struct discord *client, const struct discord_interaction *event) {
   if (event->type != DISCORD_INTERACTION_APPLICATION_COMMAND) return;
   
   if (strcmp(event->data->name, "status") == 0) {
-    struct discord_embed status = {
+    FILE *fp;
+    char buffer[128];
+    int ping = -1;
+
+    fp = popen("ping -c 1 8.8.8.8 | grep 'time=' | awk -F'time=' '{print $2}' | awk '{print $1}'", "r");
+    if (fp == NULL) {
+        perror("popen");
+        return;
+    }
+
+    if (fgets(buffer, sizeof(buffer), fp) != NULL) {
+        ping = atof(buffer);
+    }
+
+    pclose(fp);
+    char desc[64];
+    snprintf(desc, sizeof(desc), "Ping (host): `%d` ms (Google DNS)", ping);
+
+    struct discord_embed status;
+    status = (struct discord_embed){
       .title = "Bot Status",
-      .description = "Ping: `n/a`",
+      .description = desc,
       .color = 0xce933b,
     };
 
