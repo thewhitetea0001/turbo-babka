@@ -23,11 +23,11 @@ void on_interaction(struct discord *client, const struct discord_interaction *ev
 
     pclose(fp);
     char desc[64];
-    snprintf(desc, sizeof(desc), "Ping (host): `%d` ms (Google DNS)", ping);
+    snprintf(desc, sizeof(desc), "Пинг (хост): `%d` ms (Google DNS)", ping);
 
     struct discord_embed status;
     status = (struct discord_embed){
-      .title = "Bot Status",
+      .title = "Статус бота",
       .description = desc,
       .color = 0xce933b,
     };
